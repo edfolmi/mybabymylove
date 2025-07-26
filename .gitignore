@@ -15,7 +15,7 @@ staticfiles/
 !**/migrations
 !**/migrations/__init__.py
 
-*.sqlite
+*.sqlite3
 test*
 to do.txt
 *.zip
