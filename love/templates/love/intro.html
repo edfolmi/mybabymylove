@@ -1,0 +1,50 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Play Message</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-pink-100">
+
+  <div class="text-center space-y-4">
+    <h1 class="text-3xl font-bold text-pink-700">💌 I Love You So Much ❤</h1>
+
+    <button id="startExperience" class="px-6 py-3 text-lg font-semibold text-white bg-pink-500 hover:bg-pink-600 rounded-full shadow-lg transition-all duration-300 ease-in-out animate-bounce">
+      ❤️ Play My Yum Yum Voice 😘
+    </button>
+
+    <audio id="voiceNote">
+      <source src="https://res.cloudinary.com/dzpyaw27k/video/upload/v1753495338/WhatsApp_Business_ajvdcx.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+
+    <br />
+
+    <button id="startExperience2" class="px-6 py-3 text-lg font-semibold text-white bg-pink-500 hover:bg-pink-600 rounded-full shadow-lg transition-all duration-300 ease-in-out animate-bounce">
+      Click Me 🤣
+    </button>
+
+    <audio id="voiceNote2">
+        <source src="{% static 'love/seethismanooh.ogg' %}" type="audio/ogg">
+      Your browser does not support the audio element.
+    </audio>
+  </div>
+
+  <script>
+    document.getElementById("startExperience").addEventListener("click", function () {
+      const audio = document.getElementById("voiceNote");
+      audio.play().catch(e => console.log("Play failed:", e));
+    });
+
+    document.getElementById("startExperience2").addEventListener("click", function () {
+      const audio = document.getElementById("voiceNote2");
+      audio.play().catch(e => console.log("Play failed:", e));
+    });
+  </script>
+
+</body>
+</html>

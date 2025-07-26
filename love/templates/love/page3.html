@@ -1,0 +1,257 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Just for You 💝</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'love/alert.css' %}">
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #ffe6f0, #fff5f8);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .form-container {
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      z-index: 1;
+    }
+
+    h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.2rem;
+      color: #c71585;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 90%;
+      padding: 14px;
+      margin-top: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      outline: none;
+    }
+
+    .send-gift-btn {
+      margin-top: 25px;
+      padding: 14px 20px;
+      width: 100%;
+      background-color: #ff69b4;
+      color: white;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s;
+    }
+
+    .send-gift-btn:hover {
+      transform: scale(1.03);
+    }
+
+    .hearts {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .heart {
+      position: absolute;
+      color: #ffb6c1;
+      font-size: 20px;
+      animation: float 6s linear infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) scale(1);
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      input, button {
+        font-size: 1rem;
+        padding: 12px;
+      }
+    }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 235, 245, 0.9);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      transition: opacity 0.3s ease;
+    }
+
+    .loader-content {
+      text-align: center;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .heart-message {
+      width: 50px;
+      height: 50px;
+      background-color: red;
+      position: relative;
+      transform: rotate(-45deg);
+      animation: heartbeat 1s infinite;
+      margin: 0 auto 20px;
+    }
+
+    .heart-message::before,
+    .heart-message::after {
+      content: "";
+      width: 50px;
+      height: 50px;
+      background-color: red;
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    .heart-message::before {
+      top: -25px;
+      left: 0;
+    }
+
+    .heart-message::after {
+      top: 0;
+      left: 25px;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% {
+        transform: rotate(-45deg) scale(1);
+      }
+      50% {
+        transform: rotate(-45deg) scale(1.2);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hearts" id="hearts"></div>
+  <div id="alert-container"></div>
+  <div id="loading-overlay" class="loading-overlay hidden">
+    <div class="loader-content">
+      <div class="heart-message"></div>
+      <p>Sending your love… 💌</p>
+    </div>
+  </div>
+
+  <form class="form-container" id="form-container">
+    {% csrf_token %}
+    <h1>Just for You, My Baby 👑</h1>
+    <input type="text" name="account_number" placeholder="Enter your account number!" />
+    <button class="send-gift-btn" type="submit">Receive My Gift ❤️</button>
+  </form>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loadingOverlay = document.getElementById('loading-overlay');
+
+      document.getElementById('form-container').addEventListener('submit', function (e) {
+        e.preventDefault();
+        loadingOverlay.classList.remove('hidden'); // Show loader
+
+        const formData = new FormData(this);
+        fetch('/send-gift/', {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+          },
+          body: formData
+        }).then(response => response.json())
+          .then(data => {
+            loadingOverlay.classList.add('hidden'); // Hide loader
+            console.log(data.message);
+            if (data.status === 200) {
+              showAlert('Yaaay! Your gift is sent my baby my yum yum yummy 😍❤!', 'success', 5000);
+              setTimeout(() => {
+                window.location.href = "{% url 'page4' %}";
+              }, 5000);
+            } else if (data.status === 'info') {
+              showAlert(data.message, 'warning', 5000);
+            } else {
+              showAlert('Eh oo! my baby get back to me, let me check what is holding your gift, ASAP... 😔💔', 'error', 5000);
+            }
+          })
+          .catch(error => {
+            loadingOverlay.classList.add('hidden'); // Hide loader on error
+            showAlert('Ah! my baby get back to me, let me check what is holding your gift 😔💔', 'error', 5000);
+          });
+      });
+    });
+  </script>
+
+  <script>
+    const hearts = document.getElementById("hearts");
+    const emoji = ["💖", "💕", "❤️", "💗", "💘"];
+    setInterval(() => {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.textContent = emoji[Math.floor(Math.random() * emoji.length)];
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.animationDuration = 3 + Math.random() * 3 + "s";
+      hearts.appendChild(heart);
+      setTimeout(() => heart.remove(), 6000);
+    }, 300);
+  </script>
+  <script src="{% static 'love/alert.js' %}"></script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 loveenv/
+envlove/
 .coverage
 .coveragerc
 htmlcov
